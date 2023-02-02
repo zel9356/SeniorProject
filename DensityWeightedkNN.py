@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics.pairwise import cosine_similarity
 import sys
+import cv2 as cv
 
 
 def read_spectra_csv(csv_filepath, band_number):
@@ -98,7 +99,7 @@ def AdaptiveThreshold(gauss_weighted_graph, k):
 
     # introduce a normalization factor by bias
     bias = adapt_thresh[-1] / codensity.max()
-    print("adapt thresh: " + str(adapt_thresh))
+    #print("adapt thresh: " + str(adapt_thresh))
     adapt_thresh = adapt_thresh / bias
 
     # adjust the high-end boundary of adapt_thresh
@@ -108,7 +109,7 @@ def AdaptiveThreshold(gauss_weighted_graph, k):
     adapt_thresh[0] = codensity.min() + (adapt_thresh[1] - codensity.min()) / 2
 
     # get number of Adaptive_Kpix
-    print("adapt thresh: " + str(adapt_thresh))
+    #print("adapt thresh: " + str(adapt_thresh))
 
     # threshold_1, in the low density region
     region_1 = np.where(codensity < adapt_thresh[0])
@@ -142,9 +143,9 @@ def AdaptiveGW(gauss_weighted_graph, pixels_threshold, unweighted_graph):
 
     # sort unweighted graph
     sorted_unweigh = np.argsort(unweighted_graph)
-    print(sorted_unweigh)
+    #print(sorted_unweigh)
     NN_1max = sorted_unweigh[:, 1:k_1max + 1]
-    print(NN_1max)
+    #print(NN_1max)
     NN_2 = sorted_unweigh[:, 1:k_2 + 1]
     NN_3 = sorted_unweigh[:, 1:k_3 + 1]
     NN_4 = sorted_unweigh[:, 1:k_4 + 1]
@@ -201,10 +202,10 @@ def main():
         return
     else:
         band_number = int(sys.argv[1])
-        coord_col, coord_row, reflect, lineNum = read_spectra_csv('100.csv', band_number)
+        coord_col, coord_row, reflect, lineNum = read_spectra_csv('testFiles/3806Test.csv', band_number)
         reflect = reflect.reshape(lineNum,
                                   band_number)
-        print(reflect.shape)
+        #print(reflect.shape)
         gauss_weighted_graph, unweighted_graph = create_kNN(reflect, 20)
         pixels_threshold, thresh, coden = AdaptiveThreshold(gauss_weighted_graph, 20)
         adapt_GW = AdaptiveGW(gauss_weighted_graph, pixels_threshold, unweighted_graph)
@@ -213,7 +214,7 @@ def main():
         adapt_GW2 = adapt_GW + np.eye(adapt_GW.shape[0])
         display(adapt_GW2)
 
-    print(thresh)
+    #(thresh)
 
 
 if __name__ == '__main__':
