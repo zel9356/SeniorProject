@@ -40,7 +40,7 @@ def makeImageList(path):
     :return: list of images
     """
     image_names = os.listdir(path)
-    print(image_names)
+    #print(image_names)
     images = []
     for image in image_names:
         img = cv.imread(path+ "\\" + image,  cv.COLOR_BGR2GRAY)
@@ -53,13 +53,18 @@ def getData(images, roi):
     lines = int(roi[3])*int(roi[2])
     channels = len(images)
     intensity = []
+
+    # normalize data, may need to remove
+    for i in range(0, len(images)):
+        images[i] = images[i]/255
+        #print(images[i])
     for row in range(int(roi[1]), int(roi[1] + roi[3])):
         for col in range(int(roi[0]), int(roi[0] + roi[2])):
             for img in range(0, len(images)):
                 if img == 0:
                     rows.append(row)
                     cols.append(cols)
-                intensity.append(images[img][row, col]/65536)
+                intensity.append(images[img][row, col])
     intensity_np =np.array(intensity)
     intensity_reshaped = intensity_np.reshape(lines, channels)
     return cols, rows, intensity_reshaped, lines, channels
@@ -191,12 +196,18 @@ def AdaptiveGW(gauss_weighted_graph, pixels_threshold, unweighted_graph):
     """
 
     # define adaptive k values (number of neighbors) based on your scenario
-    k_1max = 5  # k_max,here max means distance max, lower density
-    k_2 = 6
-    k_3 = 8
-    k_4 = 10
-    k_5 = 12
-    k_6min = 15
+    # k_1max = 5  # k_max,here max means distance max, lower density
+    # k_2 = 6
+    # k_3 = 8
+    # k_4 = 10
+    # k_5 = 12
+    # k_6min = 15
+    k_1max = 1  # k_max,here max means distance max, lower density
+    k_2 = 2
+    k_3 = 3
+    k_4 = 4
+    k_5 = 5
+    k_6min = 6
 
     # assign adaptive k-values for KNN graph
 
@@ -262,12 +273,14 @@ def main():
     else:
         image_list = makeImageList(sys.argv[1])
         #roi = grabROI(image_list[9])
-        roi = [3806.0, 3546.0, 84.0, 60.0]
+        #roi = [3806.0, 3546.0, 84.0, 60.0]
+        img1 = image_list[0]
+        roi = [0,0, img1.shape[1],img1.shape[0]]
         #band_number = int(sys.argv[2])
         coord_col, coord_row, reflect, lineNum, bands = getData(image_list, roi )#ead_spectra_csv('testFiles/100LineTest.csv', band_number)
         #reflect = reflect.reshape(lineNum,
                                   #band_number)
-        #print(reflect.shape)
+        print(reflect)
         gauss_weighted_graph, unweighted_graph = create_kNN(reflect, 20)
         pixels_threshold, thresh, coden = AdaptiveThreshold(gauss_weighted_graph, 20)
         adapt_GW = AdaptiveGW(gauss_weighted_graph, pixels_threshold, unweighted_graph)

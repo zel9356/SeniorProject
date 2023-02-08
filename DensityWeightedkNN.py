@@ -77,7 +77,7 @@ def create_kNN(data, k):
     return gauss_weighted_graph, unweighted_graph
 
 
-def AdaptiveThreshold(gauss_weighted_graph, k):
+def adaptive_threshold(gauss_weighted_graph, k):
     """
     Based on the z score, finds which pixels fall where within the adpaptive threshold
     :param gauss_weighted_graph: the Gaussian weighted graph
@@ -122,7 +122,7 @@ def AdaptiveThreshold(gauss_weighted_graph, k):
     return (region_1[0], region_2[0], region_3[0], region_4[0], region_5[0], region_6[0]), adapt_thresh, codensity
 
 
-def AdaptiveGW(gauss_weighted_graph, pixels_threshold, unweighted_graph):
+def adaptive_gw(gauss_weighted_graph, pixels_threshold, unweighted_graph):
     """
 
     :param gauss_weighted_graph: the Gaussian weighted graph adjacency matrix
@@ -207,8 +207,8 @@ def main():
                                   band_number)
         #print(reflect.shape)
         gauss_weighted_graph, unweighted_graph = create_kNN(reflect, 20)
-        pixels_threshold, thresh, coden = AdaptiveThreshold(gauss_weighted_graph, 20)
-        adapt_GW = AdaptiveGW(gauss_weighted_graph, pixels_threshold, unweighted_graph)
+        pixels_threshold, thresh, coden = adaptive_threshold(gauss_weighted_graph, 20)
+        adapt_GW = adaptive_gw(gauss_weighted_graph, pixels_threshold, unweighted_graph)
 
         # add self-connection
         adapt_GW2 = adapt_GW + np.eye(adapt_GW.shape[0])
