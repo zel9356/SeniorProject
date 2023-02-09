@@ -1,3 +1,12 @@
+"""
+Creates a density weighted kNN graph based on a selected region of intrest
+
+File: DWkNNFromROI.py
+Author: Zoe LaLena
+Date: 2/7/2023
+Course: Senior Project
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics.pairwise import cosine_similarity
@@ -5,7 +14,8 @@ import sys
 import cv2 as cv
 import os
 
-def grabROI(image):
+
+def grab_roi(image):
     """
     grabs a region of from an image
     :param image: the image to select a ROI from
@@ -24,81 +34,95 @@ def grabROI(image):
 
     # now we need to rescale
     scaled = []
-    scaled.append(roi[0]/.5)
+    scaled.append(roi[0] / .5)
     scaled.append(roi[1] / .5)
     scaled.append(roi[2] / .5)
     scaled.append(roi[3] / .5)
-    new_image = image[int(scaled[1]):int(scaled[1]+scaled[3]),int(scaled[0]):int(scaled[0]+scaled[2])]
+    new_image = image[int(scaled[1]):int(scaled[1] + scaled[3]), int(scaled[0]):int(scaled[0] + scaled[2])]
 
-    cv.imshow("Selected Image",new_image)
+    cv.imshow("Selected Image", new_image)
     cv.waitKey()
     return scaled
-def makeImageList(path):
+
+
+def make_image_list(path):
     """
     Makes a list of all the images in a given directory
     :param path:  containing image files
     :return: list of images
     """
     image_names = os.listdir(path)
-    #print(image_names)
+    # print(image_names)
     images = []
     for image in image_names:
-        img = cv.imread(path+ "\\" + image,  cv.COLOR_BGR2GRAY)
+        img = cv.imread(path + "\\" + image, cv.COLOR_BGR2GRAY)
         images.append(img)
     return images
 
-def getData(images, roi):
+
+# def get_data(images, roi):
+#     """
+#     creates array of nodes
+#     :param images: list of images, 1 image per channel
+#     :param roi: boundaries of the ROI
+#     :return: columns and rows of nodes, the intensity values/nodes, number of nodes, number of channels
+#     """
+#     rows = []
+#     cols = []
+#     lines = int(roi[3]) * int(roi[2])
+#     channels = len(images)
+#     intensity = []
+#
+#     # normalize data, may need to remove
+#     for i in range(0, len(images)):
+#         images[i] = images[i] / 255
+#         # print(images[i])
+#     locations = []
+#     for row in range(int(roi[1]), int(roi[1] + roi[3])):
+#         for col in range(int(roi[0]), int(roi[0] + roi[2])):
+#             for img in range(0, len(images)):
+#                 if img == 0:
+#                     rows.append(row)
+#                     cols.append(cols)
+#                     locations.append((row,col))
+#                 intensity.append(images[img][row, col])
+#     intensity_np = np.array(intensity)
+#     intensity_reshaped = intensity_np.reshape(lines, channels)
+#     return cols, rows, intensity_reshaped, lines, channels, locations
+
+def get_data(images, roi):
+    """
+    creates array of nodes
+    :param images: list of images, 1 image per channel
+    :param roi: boundaries of the ROI
+    :return: columns and rows of nodes, the intensity values/nodes, number of nodes, number of channels
+    """
     rows = []
     cols = []
-    lines = int(roi[3])*int(roi[2])
+    lines = int(roi[3]) * int(roi[2])
     channels = len(images)
     intensity = []
 
     # normalize data, may need to remove
     for i in range(0, len(images)):
-        images[i] = images[i]/255
-        #print(images[i])
+        images[i] = images[i] / 255
+        # print(images[i])
+    locations = []
+    pixel_amount = 0
     for row in range(int(roi[1]), int(roi[1] + roi[3])):
         for col in range(int(roi[0]), int(roi[0] + roi[2])):
+            pixel_values = []
             for img in range(0, len(images)):
                 if img == 0:
                     rows.append(row)
                     cols.append(cols)
-                intensity.append(images[img][row, col])
-    intensity_np =np.array(intensity)
-    intensity_reshaped = intensity_np.reshape(lines, channels)
-    return cols, rows, intensity_reshaped, lines, channels
-
-def read_spectra_csv(csv_filepath, band_number):
-    """
-    Reads the spectral data from a CSV file. The data in the file should be formatted as column locations in the
-    first column, rows in the second and then each subsequent column represents the intensity at the that point in one
-    of the spectral bands for the set of images being used to form the graph.
-    :param csv_filepath: path of csv file to read
-    :param band_number: number of bands represented in the given file
-    :return: array of column positions, array of row positions, the matrix of the intensity values, number of
-    lines in the CSV file/pixels in the image or RIO
-    """
-    line_num = 0
-    coord_col, coord_row, intensity = [], [], []
-
-    with open(csv_filepath, 'r') as csvfile:
-
-        for line in csvfile:
-            i = 2
-            # split CSV line with a comma
-            data = line.split(',')
-            # get column and row locations
-            coord_col.append(int(data[0]))
-            coord_row.append(int(data[1]))
-            # after first 2 columns, rest are intensity values.
-            while i < band_number + 2:
-                intensity.append(float(data[i]))
-                i += 1
-            # keep track of how many lines are in the file
-            line_num += 1
-    return np.array(coord_col), np.array(coord_row), np.array(intensity), line_num
-
+                    locations.append((row,col))
+                pixel_values.append(images[img][row, col])
+            intensity.append(np.array( pixel_values))
+            pixel_amount = pixel_amount +1
+    intensity_np = np.array(intensity)
+    #intensity_reshaped = intensity_np.reshape(lines, channels)
+    return cols, rows, intensity_np, lines, channels, locations
 
 def gaussian_weighting_function(theta):
     """
@@ -111,7 +135,7 @@ def gaussian_weighting_function(theta):
     return w
 
 
-def create_kNN(data, k):
+def create_knn(data, k):
     """
     creates a basic kNN graph from
     :param data: intensity data as shape [number of pixels, number of bands]
@@ -141,7 +165,7 @@ def create_kNN(data, k):
     return gauss_weighted_graph, unweighted_graph
 
 
-def AdaptiveThreshold(gauss_weighted_graph, k):
+def adaptive_threshold(gauss_weighted_graph, k):
     """
     Based on the z score, finds which pixels fall where within the adpaptive threshold
     :param gauss_weighted_graph: the Gaussian weighted graph
@@ -163,7 +187,7 @@ def AdaptiveThreshold(gauss_weighted_graph, k):
 
     # introduce a normalization factor by bias
     bias = adapt_thresh[-1] / codensity.max()
-    #print("adapt thresh: " + str(adapt_thresh))
+    # print("adapt thresh: " + str(adapt_thresh))
     adapt_thresh = adapt_thresh / bias
 
     # adjust the high-end boundary of adapt_thresh
@@ -173,7 +197,7 @@ def AdaptiveThreshold(gauss_weighted_graph, k):
     adapt_thresh[0] = codensity.min() + (adapt_thresh[1] - codensity.min()) / 2
 
     # get number of Adaptive_Kpix
-    #print("adapt thresh: " + str(adapt_thresh))
+    # print("adapt thresh: " + str(adapt_thresh))
 
     # threshold_1, in the low density region
     region_1 = np.where(codensity < adapt_thresh[0])
@@ -186,9 +210,9 @@ def AdaptiveThreshold(gauss_weighted_graph, k):
     return (region_1[0], region_2[0], region_3[0], region_4[0], region_5[0], region_6[0]), adapt_thresh, codensity
 
 
-def AdaptiveGW(gauss_weighted_graph, pixels_threshold, unweighted_graph):
+def adaptive_gw(gauss_weighted_graph, pixels_threshold, unweighted_graph):
     """
-
+    Edits gaussian weighted graph to be a density weighted graph
     :param gauss_weighted_graph: the Gaussian weighted graph adjacency matrix
     :param pixels_threshold: list containing lists of pixels within each threshold
     :param unweighted_graph: unweighted adjacency matrix graph
@@ -213,9 +237,9 @@ def AdaptiveGW(gauss_weighted_graph, pixels_threshold, unweighted_graph):
 
     # sort unweighted graph
     sorted_unweigh = np.argsort(unweighted_graph)
-    #print(sorted_unweigh)
+    # print(sorted_unweigh)
     NN_1max = sorted_unweigh[:, 1:k_1max + 1]
-    #print(NN_1max)
+    # print(NN_1max)
     NN_2 = sorted_unweigh[:, 1:k_2 + 1]
     NN_3 = sorted_unweigh[:, 1:k_3 + 1]
     NN_4 = sorted_unweigh[:, 1:k_4 + 1]
@@ -264,33 +288,3 @@ def display(adj_mat):
     plt.imshow(adj_mat, cmap='hot')
     plt.colorbar()
     plt.show()
-
-
-def main():
-    if len(sys.argv) != 3:
-        print("Command Line Arguments: How many bands?")
-        return
-    else:
-        image_list = makeImageList(sys.argv[1])
-        #roi = grabROI(image_list[9])
-        #roi = [3806.0, 3546.0, 84.0, 60.0]
-        img1 = image_list[0]
-        roi = [0,0, img1.shape[1],img1.shape[0]]
-        #band_number = int(sys.argv[2])
-        coord_col, coord_row, reflect, lineNum, bands = getData(image_list, roi )#ead_spectra_csv('testFiles/100LineTest.csv', band_number)
-        #reflect = reflect.reshape(lineNum,
-                                  #band_number)
-        print(reflect)
-        gauss_weighted_graph, unweighted_graph = create_kNN(reflect, 20)
-        pixels_threshold, thresh, coden = AdaptiveThreshold(gauss_weighted_graph, 20)
-        adapt_GW = AdaptiveGW(gauss_weighted_graph, pixels_threshold, unweighted_graph)
-
-        # add self-connection
-        adapt_GW2 = adapt_GW + np.eye(adapt_GW.shape[0])
-        display(adapt_GW2)
-
-    #(thresh)
-
-
-if __name__ == '__main__':
-    main()
