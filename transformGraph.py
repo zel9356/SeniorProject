@@ -76,7 +76,7 @@ def detect(transformed_graph, l_eigen_vectors):
     magnitudes = []
     size = l_eigen_vectors.shape[0]
     for node in range(0, size):
-        magnitudes.append(math.sqrt(pow(l_eigen_vectors[node, 0], 2) + pow(l_eigen_vectors[node, 1], 2)))
+        magnitudes.append(math.sqrt(pow(l_eigen_vectors[node, 1], 2) + pow(l_eigen_vectors[node, 2], 2)))
     mags = np.array(magnitudes)
     detector = 1 / mags
     detected = []
