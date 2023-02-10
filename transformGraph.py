@@ -38,9 +38,10 @@ def graph_laplacian(graph):
     # print(diagonal_mat)
     laplacian = diagonal_mat - graph
     v = np.zeros([size, size])
-    v[31, 31] = 1
-    v[17, 17] = 1
-    # v[29,29] = 1
+    v[30,30] = 1
+    v[27,27] = 1
+    v[8,8] = 1
+
 
     S = laplacian + alpha * v
     return S, diagonal_mat
@@ -92,11 +93,13 @@ def detect(transformed_graph, l_eigen_vectors):
 def display_graph(graph, reflect, l_eigen_vectors):
     """
     Displays first 2 eigen vectors, and labels the pixel # of each pnt (3 channels only)
+    :param ind:
     :param graph: kNN graph
     :param reflect: intensities values of each pixel in graph
     :param l_eigen_vectors: first l eigen vectors
     :return:
     """
+
     fig, ax = plt.subplots()
     for i in range(0, graph.shape[0]):
         color_val = colors.rgb2hex(reflect[i])
@@ -112,7 +115,7 @@ def highlight_pixels(detected, locations, image):
     """
     for node in detected:
         row = locations[node][0]
-        col = locations[node][1]
+        col = locations[node][1]#
         image[row, col] = (255,255,255)
     cv.imwrite("imageFiles/detected_result.png",image )
     cv.imshow("Result", image)

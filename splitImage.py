@@ -18,9 +18,9 @@ def split_and_save(image, dir):
     :return: none
     """
     (blue, green, red) = cv.split(image)
-    cv.imwrite(dir + "/blue.jpg", blue)
-    cv.imwrite(dir + "/green.jpg", green)
-    cv.imwrite(dir + "/red.jpg", red)
+    cv.imwrite(dir + "/3blue.jpg", blue)
+    cv.imwrite(dir + "/2green.jpg", green)
+    cv.imwrite(dir + "/1red.jpg", red)
 
 
 

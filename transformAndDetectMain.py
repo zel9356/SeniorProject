@@ -36,8 +36,8 @@ def main():
         pixels_threshold, thresh, coden = DWkNNFromROI.adaptive_threshold(gauss_weighted_graph, 20)
 
         # based on thresholds, use correct k values
-        graph = DWkNNFromROI.adaptive_gw(gauss_weighted_graph, pixels_threshold, unweighted_graph)
-
+        graph, ind = DWkNNFromROI.adaptive_gw(gauss_weighted_graph, pixels_threshold, unweighted_graph)
+        indicies = ind[0, :]
         # add self-connection
         # graph = adapt_GW + np.eye(adapt_GW.shape[0])
 
@@ -47,7 +47,7 @@ def main():
         transformGraph.display_graph(graph, reflect, l_eigen_vectors)
         # grab orginal image for testing
         image_color = cv.imread("imageFiles/smallImage.png")
-        transformGraph.highlight_pixels(detected_numbers,locations,image_color)
+        transformGraph.highlight_pixels(detected_numbers,locations, image_color)
 
 
 if __name__ == '__main__':

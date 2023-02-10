@@ -60,36 +60,6 @@ def make_image_list(path):
     return images
 
 
-# def get_data(images, roi):
-#     """
-#     creates array of nodes
-#     :param images: list of images, 1 image per channel
-#     :param roi: boundaries of the ROI
-#     :return: columns and rows of nodes, the intensity values/nodes, number of nodes, number of channels
-#     """
-#     rows = []
-#     cols = []
-#     lines = int(roi[3]) * int(roi[2])
-#     channels = len(images)
-#     intensity = []
-#
-#     # normalize data, may need to remove
-#     for i in range(0, len(images)):
-#         images[i] = images[i] / 255
-#         # print(images[i])
-#     locations = []
-#     for row in range(int(roi[1]), int(roi[1] + roi[3])):
-#         for col in range(int(roi[0]), int(roi[0] + roi[2])):
-#             for img in range(0, len(images)):
-#                 if img == 0:
-#                     rows.append(row)
-#                     cols.append(cols)
-#                     locations.append((row,col))
-#                 intensity.append(images[img][row, col])
-#     intensity_np = np.array(intensity)
-#     intensity_reshaped = intensity_np.reshape(lines, channels)
-#     return cols, rows, intensity_reshaped, lines, channels, locations
-
 def get_data(images, roi):
     """
     creates array of nodes
@@ -108,21 +78,52 @@ def get_data(images, roi):
         images[i] = images[i] / 255
         # print(images[i])
     locations = []
-    pixel_amount = 0
     for row in range(int(roi[1]), int(roi[1] + roi[3])):
         for col in range(int(roi[0]), int(roi[0] + roi[2])):
-            pixel_values = []
             for img in range(0, len(images)):
                 if img == 0:
                     rows.append(row)
                     cols.append(cols)
                     locations.append((row,col))
-                pixel_values.append(images[img][row, col])
-            intensity.append(np.array( pixel_values))
-            pixel_amount = pixel_amount +1
+                intensity.append(images[img][row, col])
     intensity_np = np.array(intensity)
-    #intensity_reshaped = intensity_np.reshape(lines, channels)
-    return cols, rows, intensity_np, lines, channels, locations
+    intensity_reshaped = intensity_np.reshape(lines, channels)
+    return cols, rows, intensity_reshaped, lines, channels, locations
+
+# def get_data(images, roi):
+#     """
+#     creates array of nodes
+#     :param images: list of images, 1 image per channel
+#     :param roi: boundaries of the ROI
+#     :return: columns and rows of nodes, the intensity values/nodes, number of nodes, number of channels
+#     """
+#     rows = []
+#     cols = []
+#     lines = int(roi[3]) * int(roi[2])
+#     channels = len(images)
+#     intensity = []
+#
+#     # normalize data, may need to remove
+#     for i in range(0, len(images)):
+#         images[i] = images[i] / 255
+#         # print(images[i])
+#     locations = []
+#     pixel_amount = 0
+#     for row in range(int(roi[1]), int(roi[1] + roi[3])):
+#         for col in range(int(roi[0]), int(roi[0] + roi[2])):
+#             pixel_values = []
+#             for img in range(0, len(images)):
+#                 if img == 0:
+#                     rows.append(row)
+#                     cols.append(cols)
+#                     locations.append((row, col))
+#                 pixel_values.append(images[img][row, col])
+#             intensity.append(np.array(pixel_values))
+#             pixel_amount = pixel_amount + 1
+#     intensity_np = np.array(intensity)
+#     # intensity_reshaped = intensity_np.reshape(lines, channels)
+#     return cols, rows, intensity_np, lines, channels, locations
+
 
 def gaussian_weighting_function(theta):
     """
@@ -237,6 +238,10 @@ def adaptive_gw(gauss_weighted_graph, pixels_threshold, unweighted_graph):
 
     # sort unweighted graph
     sorted_unweigh = np.argsort(unweighted_graph)
+    # rows = np.array(rows)
+    # cols = np.array(cols)
+    # cols = np.take_along_axis(cols, sorted_unweigh[:,0], axis=0)
+    # rows = np.take_along_axis(rows, sorted_unweigh[:, 0], axis=0)
     # print(sorted_unweigh)
     NN_1max = sorted_unweigh[:, 1:k_1max + 1]
     # print(NN_1max)
@@ -275,7 +280,7 @@ def adaptive_gw(gauss_weighted_graph, pixels_threshold, unweighted_graph):
             for j in range(num):
                 if j in NN_6min[i]:
                     adapt_GW[i][j] = gauss_weighted_graph[i, j]
-    return adapt_GW
+    return adapt_GW, sorted_unweigh
 
 
 # Plot adjacency matrix
