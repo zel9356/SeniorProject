@@ -17,10 +17,10 @@ from matplotlib import colors
 import cv2 as cv
 
 # how many eigen vectors to use
-L = 2
+L = 4
 
 
-def graph_laplacian(graph):
+def graph_laplacian(graph,v):
     """
     get the laplacian of a given graph
     L = D - W
@@ -37,10 +37,10 @@ def graph_laplacian(graph):
     diagonal_mat = eye * diagonal_values
     # print(diagonal_mat)
     laplacian = diagonal_mat - graph
-    v = np.zeros([size, size])
-    v[30,30] = 1
-    v[27,27] = 1
-    v[8,8] = 1
+    # v = np.zeros([size, size])
+    # v[30,30] = 1
+    # v[27,27] = 1
+    # v[8,8] = 1
 
 
     S = laplacian + alpha * v
@@ -76,13 +76,17 @@ def detect(transformed_graph, l_eigen_vectors):
     magnitudes = []
     size = l_eigen_vectors.shape[0]
     for node in range(0, size):
-        magnitudes.append(math.sqrt(pow(l_eigen_vectors[node, 0], 2) + pow(l_eigen_vectors[node, 1], 2)))
+        mag = 0
+        for l in range(0,L):
+            mag += pow(l_eigen_vectors[node, l], 2)
+        magnitudes.append(math.sqrt(mag))
     mags = np.array(magnitudes)
     detector = 1 / mags
     detected = []
     print("Detected")
+    print(detector)
     for i in range(0, size):
-        if detector[i] > 1e16:
+        if detector[i] > 1e10:
             detected.append(i)
             print(i)
 
@@ -102,8 +106,8 @@ def display_graph(graph, reflect, l_eigen_vectors):
 
     fig, ax = plt.subplots()
     for i in range(0, graph.shape[0]):
-        color_val = colors.rgb2hex(reflect[i])
-        ax.scatter(l_eigen_vectors[i, 0], l_eigen_vectors[i, 1], color=color_val)
+        #color_val = colors.rgb2hex(reflect[i])
+        ax.scatter(l_eigen_vectors[i, 0], l_eigen_vectors[i, 1])#, color=color_val)
         ax.annotate(str(i), (l_eigen_vectors[i, 0], l_eigen_vectors[i, 1]))
     plt.show()
 
@@ -116,9 +120,10 @@ def highlight_pixels(detected, locations, image):
     for node in detected:
         row = locations[node][0]
         col = locations[node][1]#
-        image[row, col] = (255,255,255)
+        image[row, col] = (255,255,0)
     cv.imwrite("imageFiles/detected_result.png",image )
     cv.imshow("Result", image)
     cv.waitKey()
+    cv.imwrite("result.tif", image)
 
 

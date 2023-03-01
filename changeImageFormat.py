@@ -58,7 +58,7 @@ def makeCSVFile(images, roi):
 def makeImageList(path):
     """
     Makes a list of all the images in a given directory
-    :param path: directory containing image files
+    :param path:  containing image files
     :return: list of images
     """
     image_names = os.listdir(path)

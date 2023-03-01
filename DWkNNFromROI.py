@@ -1,6 +1,5 @@
 """
 Creates a density weighted kNN graph based on a selected region of intrest
-
 File: DWkNNFromROI.py
 Author: Zoe LaLena
 Date: 2/7/2023
@@ -55,7 +54,7 @@ def make_image_list(path):
     # print(image_names)
     images = []
     for image in image_names:
-        img = cv.imread(path + "\\" + image, cv.COLOR_BGR2GRAY)
+        img = cv.imread(path + "\\" + image, cv.IMREAD_GRAYSCALE)
         images.append(img)
     return images
 
@@ -84,11 +83,12 @@ def get_data(images, roi):
                 if img == 0:
                     rows.append(row)
                     cols.append(cols)
-                    locations.append((row,col))
+                    locations.append((row, col))
                 intensity.append(images[img][row, col])
     intensity_np = np.array(intensity)
     intensity_reshaped = intensity_np.reshape(lines, channels)
     return cols, rows, intensity_reshaped, lines, channels, locations
+
 
 # def get_data(images, roi):
 #     """
@@ -221,18 +221,18 @@ def adaptive_gw(gauss_weighted_graph, pixels_threshold, unweighted_graph):
     """
 
     # define adaptive k values (number of neighbors) based on your scenario
-    # k_1max = 5  # k_max,here max means distance max, lower density
-    # k_2 = 6
-    # k_3 = 8
-    # k_4 = 10
-    # k_5 = 12
-    # k_6min = 15
-    k_1max = 1  # k_max,here max means distance max, lower density
-    k_2 = 2
-    k_3 = 3
-    k_4 = 4
-    k_5 = 5
-    k_6min = 6
+    k_1max = 5  # k_max,here max means distance max, lower density
+    k_2 = 6
+    k_3 = 8
+    k_4 = 10
+    k_5 = 12
+    k_6min = 15
+    # k_1max = 1  # k_max,here max means distance max, lower density
+    # k_2 = 2
+    # k_3 = 3
+    # k_4 = 4
+    # k_5 = 5
+    # k_6min = 6
 
     # assign adaptive k-values for KNN graph
 
