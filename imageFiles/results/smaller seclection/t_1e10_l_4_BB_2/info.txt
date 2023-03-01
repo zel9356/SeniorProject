@@ -1,0 +1,7 @@
+Images:C:\Users\zoeel\PycharmProjects\SeniorProject\imageFiles\selection_cropped_more
+
+L = 4
+
+Threshold = 1e10
+
+2 bounding boxes in visable letter
