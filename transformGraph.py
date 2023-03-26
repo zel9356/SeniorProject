@@ -17,17 +17,18 @@ from matplotlib import colors
 import cv2 as cv
 
 # how many eigen vectors to use
-L = 4
+L = 3
+T = 46
 
 
-def graph_laplacian(graph,v):
+def graph_laplacian(graph, v):
     """
     get the laplacian of a given graph
     L = D - W
     :param graph: the graph to find the laplacian of
     :return: the laplacian (L) and the diagonal matrix (D)
     """
-    alpha = 10
+    alpha = 1
     # get identity
     size = graph.shape[0]
     eye = np.identity(size)
@@ -41,7 +42,6 @@ def graph_laplacian(graph,v):
     # v[30,30] = 1
     # v[27,27] = 1
     # v[8,8] = 1
-
 
     S = laplacian + alpha * v
     return S, diagonal_mat
@@ -77,7 +77,7 @@ def detect(transformed_graph, l_eigen_vectors):
     size = l_eigen_vectors.shape[0]
     for node in range(0, size):
         mag = 0
-        for l in range(0,L):
+        for l in range(1, L):
             mag += pow(l_eigen_vectors[node, l], 2)
         magnitudes.append(math.sqrt(mag))
     mags = np.array(magnitudes)
@@ -107,8 +107,8 @@ def display_graph(graph, reflect, l_eigen_vectors):
     fig, ax = plt.subplots()
     for i in range(0, graph.shape[0]):
         #color_val = colors.rgb2hex(reflect[i])
-        ax.scatter(l_eigen_vectors[i, 0], l_eigen_vectors[i, 1])#, color=color_val)
-        ax.annotate(str(i), (l_eigen_vectors[i, 0], l_eigen_vectors[i, 1]))
+        ax.scatter(l_eigen_vectors[i, 1], l_eigen_vectors[i, 2])#, color=color_val)
+        ax.annotate(str(i), (l_eigen_vectors[i, 1], l_eigen_vectors[i, 2]))
     plt.show()
 
 
@@ -119,11 +119,9 @@ def highlight_pixels(detected, locations, image):
     """
     for node in detected:
         row = locations[node][0]
-        col = locations[node][1]#
-        image[row, col] = (255,255,0)
-    cv.imwrite("imageFiles/detected_result.png",image )
+        col = locations[node][1]  #
+        image[row, col] = (255, 255, 0)
+    cv.imwrite("imageFiles/detected_result.png", image)
     cv.imshow("Result", image)
     cv.waitKey()
     cv.imwrite("result.tif", image)
-
-

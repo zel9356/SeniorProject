@@ -26,11 +26,11 @@ def split_and_save(image, dir):
 
 def combineAndSave(folder):
     image_names = os.listdir(folder)
-    blue = cv.imread(folder + "/" + image_names[2],cv.IMREAD_GRAYSCALE)
-    red = cv.imread(folder + "/" + image_names[0],cv.IMREAD_GRAYSCALE)
-    green = cv.imread(folder + "/" + image_names[1],cv.IMREAD_GRAYSCALE)
+    blue = cv.imread(folder + "/" + image_names[2], cv.IMREAD_GRAYSCALE)
+    red = cv.imread(folder + "/" + image_names[0], cv.IMREAD_GRAYSCALE)
+    green = cv.imread(folder + "/" + image_names[1], cv.IMREAD_GRAYSCALE)
     color = cv.merge([red, green, blue])
-    cv.imwrite("imageFiles/color_color.png" , color)
+    cv.imwrite("imageFiles/color_color.png", color)
 
 
 def main():
@@ -40,7 +40,7 @@ def main():
     path = sys.argv[1]
     image = cv.imread(path)
     split_and_save(image, sys.argv[2])
-    #combineAndSave("imageFiles/3 318 r")
+    # combineAndSave("imageFiles/3 318 r")
 
 
 if __name__ == '__main__':

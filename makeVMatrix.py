@@ -51,7 +51,7 @@ def crop(folder):
 
     w, h = image1.shape
     roi_list = []
-    scale_percent = 20  # percent of original size
+    scale_percent = 2  # percent of original size
     width = int(image1.shape[1] * scale_percent / 100)
     height = int(image1.shape[0] * scale_percent / 100)
     dim = (width, height)

@@ -46,7 +46,7 @@ def main():
         detected_numbers = transformGraph.detect(transformed_graph, l_eigen_vectors)
         transformGraph.display_graph(graph, reflect, l_eigen_vectors)
         # grab orginal image for testing
-        image_color = cv.imread("imageFiles/318_all_aspects/1msXL_318r_b-M0615RO_11_F.tif")
+        image_color = cv.imread("imageFiles/selection_cropped_more/1crop_ msXL_318r_b-M0730IR_15_F.tif")
         transformGraph.highlight_pixels(detected_numbers,locations, image_color)
 
 

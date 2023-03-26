@@ -13,6 +13,8 @@ import sys
 import DWkNNFromROI
 import transformGraph
 import cv2 as cv
+import numpy as np
+import makeVMatrix
 
 
 def main():
@@ -40,14 +42,23 @@ def main():
         indicies = ind[0, :]
         # add self-connection
         # graph = adapt_GW + np.eye(adapt_GW.shape[0])
+        # V = makeVMatrix.getV(img1)
+        size = graph.shape[0]
+        V = np.zeros([size, size])
+        # V[1, 1] = 1
+        V[11, 11] = 1
+        V[12, 12] = 1
+        V[16, 16] = 1
+        # V[19, 19] = 1
+        # V[12,12] =1
 
-        laplacian, diagonal_mat = transformGraph.graph_laplacian(graph)
+        laplacian, diagonal_mat = transformGraph.graph_laplacian(graph, V)
         l_eigen_vectors, transformed_graph = transformGraph.eigen_value_problem(laplacian, diagonal_mat, graph)
         detected_numbers = transformGraph.detect(transformed_graph, l_eigen_vectors)
         transformGraph.display_graph(graph, reflect, l_eigen_vectors)
         # grab orginal image for testing
-        image_color = cv.imread("imageFiles/smallImage.png")
-        transformGraph.highlight_pixels(detected_numbers,locations, image_color)
+        image_color = cv.imread("imageFiles/color_images/r_g_y_m.png")
+        transformGraph.highlight_pixels(detected_numbers, locations, image_color)
 
 
 if __name__ == '__main__':
