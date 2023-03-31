@@ -112,16 +112,18 @@ def display_graph(graph, reflect, l_eigen_vectors):
     plt.show()
 
 
-def highlight_pixels(detected, locations, image):
+def highlight_pixels(detected, locations, image,lines,save_name):
     """
     We know what pixel numbers have been detected, but not location so lets mark the location on the image
     :return:
     """
     for node in detected:
-        row = locations[node][0]
-        col = locations[node][1]  #
-        image[row, col] = (255, 255, 0)
-    cv.imwrite("imageFiles/detected_result.png", image)
+        if node< lines:
+            row = locations[node][0]
+            col = locations[node][1]  #
+            if row < image.shape[0] and col < image.shape[1]:
+                image[row, col] = (255, 255, 0)
+    cv.imwrite("imageFiles/" + save_name, image)
     cv.imshow("Result", image)
     cv.waitKey()
     cv.imwrite("result.tif", image)

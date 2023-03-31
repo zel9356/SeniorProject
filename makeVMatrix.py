@@ -51,7 +51,7 @@ def crop(folder):
 
     w, h = image1.shape
     roi_list = []
-    scale_percent = 2  # percent of original size
+    scale_percent = 200  # percent of original size
     width = int(image1.shape[1] * scale_percent / 100)
     height = int(image1.shape[0] * scale_percent / 100)
     dim = (width, height)
@@ -69,11 +69,11 @@ def crop(folder):
     for img_name in image_names:
         img = cv.imread(folder + "/" + img_name,cv.IMREAD_GRAYSCALE)
         img_crop = img[int(scaled[1]):int(scaled[1] + scaled[3]), int(scaled[0]):int(scaled[0] + scaled[2])]
-        cv.imwrite("imageFiles/318_all_aspects/" + img_name, img_crop)
+        cv.imwrite("imageFiles/318_all_aspects_half/" + img_name, img_crop)
 
 
 def main():
-    crop(r"D:\Zoe\318r\TIFFs")
+    crop("imageFiles/318_all_aspects")
     # image = cv.imread("imageFiles/cropped 318r/1crop_ msXL_318r_b-M0627RD_12_F.tif",cv.IMREAD_GRAYSCALE)
     # getV(image, True, "318_cropped.csv")
 
