@@ -19,6 +19,7 @@ import cv2 as cv
 # how many eigen vectors to use
 L = 3
 T = 46
+open_images = False
 
 
 def graph_laplacian(graph, v):
@@ -83,15 +84,12 @@ def detect(transformed_graph, l_eigen_vectors):
     mags = np.array(magnitudes)
     detector = 1 / mags
     detected = []
-    print("Detected")
-    print(detector)
-    for i in range(0, size):
-        if detector[i] > 1e10:
-            detected.append(i)
-            print(i)
 
-    print(detector)
-    return detected
+    for i in range(0, size):
+        if abs(detector[i]) > 1e9:
+            detected.append(i)
+
+    return detected, detector
 
 
 def display_graph(graph, reflect, l_eigen_vectors):
@@ -106,24 +104,38 @@ def display_graph(graph, reflect, l_eigen_vectors):
 
     fig, ax = plt.subplots()
     for i in range(0, graph.shape[0]):
-        #color_val = colors.rgb2hex(reflect[i])
-        ax.scatter(l_eigen_vectors[i, 1], l_eigen_vectors[i, 2])#, color=color_val)
+        # color_val = colors.rgb2hex(reflect[i])
+        ax.scatter(l_eigen_vectors[i, 1], l_eigen_vectors[i, 2])  # , color=color_val)
         ax.annotate(str(i), (l_eigen_vectors[i, 1], l_eigen_vectors[i, 2]))
-    plt.show()
+
+    if open_images:
+        plt.show()
 
 
-def highlight_pixels(detected, locations, image,lines,save_name):
+def produce_detection_image(lines, locations, detector, img,save):
+    w, h = img.shape
+    image = np.zeros((w, h))
+    for l in range(0, lines):
+        row = locations[l][0]
+        col = locations[l][1]  #
+        image[row, col] = detector[l]
+    normalize = cv.normalize(image,0, 1.0, cv.NORM_MINMAX, dtype=cv.CV_32F)
+    cv.imwrite("imageFiles/detected_" + save + ".tif", normalize)
+
+
+def highlight_pixels(detected, locations, image, lines, save_name):
     """
     We know what pixel numbers have been detected, but not location so lets mark the location on the image
     :return:
     """
     for node in detected:
-        if node< lines:
+        if node < lines:
             row = locations[node][0]
             col = locations[node][1]  #
             if row < image.shape[0] and col < image.shape[1]:
                 image[row, col] = (255, 255, 0)
     cv.imwrite("imageFiles/" + save_name, image)
-    cv.imshow("Result", image)
-    cv.waitKey()
-    cv.imwrite("result.tif", image)
+    if open_images:
+        cv.imshow("Result", image)
+        cv.waitKey()
+        cv.imwrite("result.tif", image)

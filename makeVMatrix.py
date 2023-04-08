@@ -1,5 +1,9 @@
 """
-
+code to grab V matrix from image and crop
+File: makeVMatrix.py
+Author: Zoe LaLena
+Date: 3/23/2023
+Course: Senior Project
 """
 import cv2 as cv
 import numpy as np

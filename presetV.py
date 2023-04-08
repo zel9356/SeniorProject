@@ -60,7 +60,7 @@ def get_pixels(folder):
     lines = len(locations)
     intensity_np = np.array(intensity)
     intensity_reshaped = intensity_np.reshape(lines, channels)
-    np.savetxt("V_refl.csv", intensity_reshaped, delimiter=",")
+    np.savetxt("318r_V_refl_2500_4100.csv", intensity_reshaped, delimiter=",")
     return cols, rows, intensity_reshaped, lines, channels, locations
 
 
@@ -104,7 +104,7 @@ def make_v(graph, lines):
 main for testing
 """
 def main():
-    get_pixels("imageFiles/selection_cropped_more")
+    get_pixels("imageFiles/318r/2500_4100")
     V = load_v("V_refl.csv")
     print("out")
     print(V)
