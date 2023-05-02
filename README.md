@@ -14,9 +14,12 @@ test_with_set_v_main.py currently runs the me6thod on sevral images using the sa
 
 The call to run each image is as follows
 testWithSetV(set_v, folder_of_imgs, save_name)
+
     :param set_v: file of set v values
-    :param folder_of_imgs: folder containing multi-spectral images
-    :param save_name: name for saving image
-    :return: 
     
+    :param folder_of_imgs: folder containing multi-spectral images
+    
+    :param save_name: name for saving image
+
+
   To get a file containg the V info, run presetV, changing the file name in the main function to the folder of multispectral images to be used for V
