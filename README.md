@@ -1,8 +1,11 @@
 # SeniorProject
 There are several paprmenters to chnage in differnt spots
-  Threshold -> Change T at top of transformGraph.py \n
+  Threshold -> Change T at top of transformGraph.py 
+  
   The k values in kNNs -> change 1_1max - k_6min in the function adaptive_gw in DWkNNFromROI.py
+  
   Channels used -> chnage what files are in the folders of input images
+  
   Number of dimensions in the lower dimension space -> Change L at top of transformGraph.py
   
   
