@@ -221,20 +221,33 @@ def adaptive_gw(gauss_weighted_graph, pixels_threshold, unweighted_graph):
     """
 
     # define adaptive k values (number of neighbors) based on your scenario
-    # k_1max = 5  # k_max,here max means distance max, lower density
-    # k_2 = 6
-    # k_3 = 8
-    # k_4 = 10
-    # k_5 = 12
-    # k_6min = 15
+    # k_1max = 1  # k_max,here max means distance max, lower density
+    # k_2 = 2
+    # k_3 = 3
+    # k_4 = 4
+    # k_5 = 5
+    # k_6min = 6
 
-    k_1max = 1  # k_max,here max means distance max, lower density
+    # k_1max = 2  # k_max,here max means distance max, lower density
+    # k_2 = 3
+    # k_3 = 7
+    # k_4 = 8
+    # k_5 = 9
+    # k_6min = 9
+
+    k_1max = 2  # k_max,here max means distance max, lower density
     k_2 = 3
-    k_3 = 5
+    k_3 = 6
     k_4 = 6
-    k_5 = 6
-    k_6min = 6
+    k_5 = 8
+    k_6min = 9
 
+    # k_1max = 1  # k_max,here max means distance max, lower density
+    # k_2 = 3
+    # k_3 = 5
+    # k_4 = 6
+    # k_5 = 6
+    # k_6min = 6
 
     # k_1max = 1  # k_max,here max means distance max, lower density
     # k_2 = 2

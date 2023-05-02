@@ -105,22 +105,31 @@ def display_graph(graph, reflect, l_eigen_vectors):
     fig, ax = plt.subplots()
     for i in range(0, graph.shape[0]):
         # color_val = colors.rgb2hex(reflect[i])
-        ax.scatter(l_eigen_vectors[i, 1], l_eigen_vectors[i, 2])  # , color=color_val)
-        ax.annotate(str(i), (l_eigen_vectors[i, 1], l_eigen_vectors[i, 2]))
+        ax.scatter(l_eigen_vectors[i, 0], l_eigen_vectors[i, 1])  # , color=color_val)
+        ax.annotate(str(i), (l_eigen_vectors[i, 0], l_eigen_vectors[i, 1]))
 
     if open_images:
         plt.show()
 
 
-def produce_detection_image(lines, locations, detector, img,save):
+def produce_detection_image(lines, locations, detector, img, save):
     w, h = img.shape
-    image = np.zeros((w, h))
+    image = np.zeros((w, h))#, dtype=float)
+    detector_trim = np.abs(detector[0:w*h])
+    max = np.max(detector_trim[detector_trim != np.inf])
+    detector_trim[detector_trim == np.inf] = max
+    detector_log = np.log(detector_trim)
     for l in range(0, lines):
         row = locations[l][0]
-        col = locations[l][1]  #
-        image[row, col] = detector[l]
-    normalize = cv.normalize(image,0, 1.0, cv.NORM_MINMAX, dtype=cv.CV_32F)
-    cv.imwrite("imageFiles/detected_" + save + ".tif", normalize)
+        col = locations[l][1]
+        image[row, col] = detector_log[l]
+    normalize = cv.normalize(image, 0, 255, cv.NORM_MINMAX, dtype= cv.CV_8UC1)
+    max = np.max(normalize)
+    normalize = normalize/max*255
+    #np.savetxt("detector.csv", normalize, delimiter=",")
+    # cv.imshow("Result", normalize)
+    # cv.waitKey()
+    cv.imwrite("imageFiles/detected_" + save + ".jpg", normalize)
 
 
 def highlight_pixels(detected, locations, image, lines, save_name):

@@ -26,20 +26,18 @@ def split_and_save(image, dir):
 
 def combineAndSave(folder):
     image_names = os.listdir(folder)
-    blue = cv.imread(folder + "/" + image_names[2], cv.IMREAD_GRAYSCALE)
-    red = cv.imread(folder + "/" + image_names[0], cv.IMREAD_GRAYSCALE)
+    blue = cv.imread(folder + "/" + image_names[0], cv.IMREAD_GRAYSCALE)
+    red = cv.imread(folder + "/" + image_names[2], cv.IMREAD_GRAYSCALE)
     green = cv.imread(folder + "/" + image_names[1], cv.IMREAD_GRAYSCALE)
-    color = cv.merge([red, green, blue])
-    cv.imwrite("imageFiles/color_color.png", color)
+    color = cv.merge([blue, green, red])
+    cv.imwrite("imageFiles/color" + "900_4900" + ".png", color)
 
 
 def main():
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 2:
         print("Command Line Arguments: color image location, directory to save channel images")
         return
-    path = sys.argv[1]
-    image = cv.imread(path)
-    split_and_save(image, sys.argv[2])
+    combineAndSave( sys.argv[1])
     # combineAndSave("imageFiles/3 318 r")
 
 
